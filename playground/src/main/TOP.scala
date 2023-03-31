@@ -1,14 +1,8 @@
-package playground.TOP
+package main
 
 import chisel3._
-import chisel3.util.Cat
-import chisel3.util.Fill
+import chisel3.util._
 
-/**
-  * Compute GCD using subtraction method.
-  * Subtracts the smaller from the larger until register y is zero.
-  * value in register x is then the GCD
-  */
 class TOP extends Module {
   val io = IO(new Bundle {
     val sw          = Input(UInt(16.W))
