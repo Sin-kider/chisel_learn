@@ -7,7 +7,30 @@
 [com-lihaoyi/mill](https://github.com/com-lihaoyi/mill): `Scala`构建工具  
 [verilator](https://verilator.org/): `verilog`仿真工具  
 [NJU-ProjectN/nvboard](https://github.com/NJU-ProjectN/nvboard): `verilog`仿真工具, 可模拟一个图形化的FPGA, 支持LED, 七段数码管, 开关, 键盘和VGA  
+[gtkwave/gtkwave](https://github.com/gtkwave/gtkwave): 用于查看`verilator`生成的波形文件  
+
+---  
 **说明**: `mill`与`millw`使用任意一个即可, 使用`millw`时将脚本更名为`mill`后将路径添加到`PATH`即可进行`make`. 也可以选择不更名, 将`make`中所有`mill`改为`millw`.
+
+## 命令使用
+**说明**: 以下命令都需要配置相应的工具或环境. 若出现错误请查看上文的工具是否安装齐全, 安装方法工具主页都有相关说明. 基本工具如`make`, `gcc`等请自行`STFW`.
+`make val`编译verilator  
+`make valrun`运行verilator并生成波形文件  
+`make valsim`运行gtkwave查看波形  
+`make nv`编译nvboard  
+`make nvrun`运行nvboard  
+`make test`chisel测试  
+`make verilog`chisel生成verilog  
+`make help`查看circt工具帮助信息  
+`make compile`编译  
+`make bsp`生成idea所需文件  
+`make reformat`代码整理  
+`make checkformat`检查.scalafmt.conf文件  
+`make clean`移除全部生成文件  
+`make cleannv`移除nvboard生成文件  
+`make cleanchi`移除chisel生成文件  
+`make cleanval`移除verlator生成文件  
+
 ## 项目结构
 ```SHELL
 $ git checkout template
