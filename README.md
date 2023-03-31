@@ -51,7 +51,7 @@ $ tree -a .
 ├── playground
 │   ├── src
 │   │   └── main
-│   │       ├── Elaborate.scala // 用于生成veriltor
+│   │       ├── Elaborate.scala // 用于生成verilog
 │   │       └── TOP.scala       // 顶层模块
 │   └── test
 ├── utils // 编译用工具
