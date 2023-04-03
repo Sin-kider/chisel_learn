@@ -1,5 +1,4 @@
 import circt.stage._
-import main.TOP
 
 object Elaborate extends App {
   def top       = new TOP()

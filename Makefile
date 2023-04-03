@@ -1,47 +1,49 @@
 # for all
-TOPNAME=TOP
-TOP_DIR:=$(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-BUILD_PATH=$(TOP_DIR)build
+TOPNAME		=	TOP
+TOP_DIR		:=	$(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+BUILD_PATH	=	$(TOP_DIR)build
+
 .PHONY: test verilog help compile bsp reformat checkformat clean
 
 # verilator
-VAL=verilator
-VAL_DIR=$(TOP_DIR)$(VAL)
-VAL_CFLAGS+=-MMD --build -cc -O3 --x-assign fast --x-initial fast --noassert
-CFLAGS+=-DTOP_NAME=V$(TOPNAME)
-VAL_INC_PATH=$(VAL_DIR)/INC
-VAL_SRC_PATH=$(VAL_DIR)/SRC
-VAL_SRC_DIR=$(foreach dir,$(VAL_SRC_PATH),$(wildcard $(dir)/*.cpp))
-VAL_BUILD_PATH=$(BUILD_PATH)/$(VAL)
-VAL_OBJ_PATH=$(VAL_BUILD_PATH)/temp
-VAL_BIN_PATH=$(VAL_BUILD_PATH)/bin
-VAL_BIN=$(VAL_BIN_PATH)/$(TOPNAME)
-VAL_WAVE_DIR=$(VAL_BIN_PATH)/wave.vcd
+VAL				=	verilator
+VAL_DI			=	$(TOP_DIR)$(VAL)
+VAL_CFLAGS		+=	-MMD --build -cc -O3 --x-assign fast --x-initial fast --noassert
+CFLAGS			+=	-DTOP_NAME=V$(TOPNAME)
+VAL_INC_PATH	=	$(VAL_DIR)/INC
+VAL_SRC_PATH	=	$(VAL_DIR)/SRC
+VAL_SRC_DIR		=	$(foreach dir,$(VAL_SRC_PATH),$(wildcard $(dir)/*.cpp))
+VAL_BUILD_PATH	=	$(BUILD_PATH)/$(VAL)
+VAL_OBJ_PATH	=	$(VAL_BUILD_PATH)/temp
+VAL_BIN_PATH	=	$(VAL_BUILD_PATH)/bin
+VAL_BIN			=	$(VAL_BIN_PATH)/$(TOPNAME)
+VAL_WAVE_DIR	=	$(VAL_BIN_PATH)/wave.vcd
 
 # nvboard
 include $(NVBOARD_HOME)/scripts/nvboard.mk
-NV=nvboard
-NV_DIR=$(TOP_DIR)$(NV)
-NV_VERILATOR_CFLAGS+=-MMD --build -cc -O3 --x-assign fast --x-initial fast --noassert
-NV_BUILD_PATH=$(BUILD_PATH)/$(NV)
-NV_OBJ_PATH=$(NV_BUILD_PATH)/temp
-NV_BIN_PATH=$(NV_BUILD_PATH)/bin
-NV_CPP_INC_PATH=$(NV_DIR)/INC
-NV_CPP_INC_PATH+=$(INC_PATH)
-NV_CPP_SRC_PATH=$(NV_DIR)/SRC
-NV_CPP_SRC_DIR=$(foreach dir,$(NV_CPP_SRC_PATH),$(wildcard $(dir)/*.cpp))
-NV_BIN=$(NV_BIN_PATH)/$(TOPNAME)
-NV_CONSTR=$(NV_DIR)/constr
-NV_NXDC=$(wildcard $(NV_CONSTR)/*.nxdc)
-NV_SRC_AUTO_BIND=$(NV_OBJ_PATH)/auto_bind.cpp
-NV_INCFLAGS=$(addprefix -I,$(NV_CPP_INC_PATH))
-NV_CFLAGS=$(NV_INCFLAGS) -DTOP_NAME=V$(TOPNAME)
-NV_LDFLAGS+=-lSDL2 -lSDL2_image
+NV					=	nvboard
+NV_DIR				=	$(TOP_DIR)$(NV)
+NV_VERILATOR_CFLAGS	+=	-MMD --build -cc -O3 --x-assign fast --x-initial fast --noassert
+NV_BUILD_PATH		=	$(BUILD_PATH)/$(NV)
+NV_OBJ_PATH			=	$(NV_BUILD_PATH)/temp
+NV_BIN_PATH			=	$(NV_BUILD_PATH)/bin
+NV_CPP_INC_PATH		=	$(NV_DIR)/INC
+NV_CPP_INC_PATH		+=	$(INC_PATH)
+NV_CPP_SRC_PATH		=	$(NV_DIR)/SRC
+NV_CPP_SRC_DIR		=	$(foreach dir,$(NV_CPP_SRC_PATH),$(wildcard $(dir)/*.cpp))
+NV_BIN				=	$(NV_BIN_PATH)/$(TOPNAME)
+NV_CONSTR			=	$(NV_DIR)/constr
+NV_NXDC				=	$(wildcard $(NV_CONSTR)/*.nxdc)
+NV_SRC_AUTO_BIND	=	$(NV_OBJ_PATH)/auto_bind.cpp
+NV_INCFLAGS			=	$(addprefix -I,$(NV_CPP_INC_PATH))
+NV_CFLAGS			=	$(NV_INCFLAGS) -DTOP_NAME=V$(TOPNAME)
+NV_LDFLAGS			+=	-lSDL2 -lSDL2_image
 
 # chisel
-CHISEL_BUILD_PATH = $(BUILD_PATH)/chisel
-CHISEL_BUILD_VSRC = $(CHISEL_BUILD_PATH)/$(TOPNAME).v
-export PATH := $(PATH):$(abspath ./utils)
+CHISEL_BUILD_PATH 	= 	$(BUILD_PATH)/chisel
+CHISEL_BUILD_VSRC 	= 	$(CHISEL_BUILD_PATH)/$(TOPNAME).v
+CHISEL_TEST_DIR 	= 	$(TOP_DIR)/test_run_dir	
+export PATH 		:= 	$(PATH):$(abspath ./utils)
 
 # verilator
 val: build_prepare $(VAL_BIN)
@@ -50,7 +52,7 @@ $(VAL_WAVE_DIR): $(VAL_BIN)
 	@cd $(VAL_BIN_PATH) && ./$(TOPNAME)
 
 valrun: $(VAL_WAVE_DIR) build_prepare
-	@echo "> RUN $<"
+	@echo "> RUN $(VAL_BIN_PATH)/$(TOPNAME)"
 
 valsim: $(VAL_WAVE_DIR) val_run
 	@echo "> SIM $<"
@@ -148,6 +150,10 @@ clean:
 	echo "- RM\t$(CHISEL_BUILD_PATH)"; \
 	rm -rf $(CHISEL_BUILD_PATH); \
 	fi
+	@if [ -d $(CHISEL_TEST_DIR) ]; then \
+	echo "- RM\t$(CHISEL_TEST_DIR)"; \
+	rm -rf $(CHISEL_TEST_DIR); \
+	fi
 	@if [ -d $(NV_BUILD_PATH) ]; then \
 	echo "- RM\t$(NV_BUILD_PATH)"; \
 	rm -rf $(NV_BUILD_PATH); \
@@ -163,6 +169,10 @@ cleanchi:
 	@if [ -d $(CHISEL_BUILD_PATH) ]; then \
 	echo "- RM\t$(CHISEL_BUILD_PATH)"; \
 	rm -rf $(CHISEL_BUILD_PATH); \
+	fi
+	@if [ -d $(CHISEL_TEST_DIR) ]; then \
+	echo "- RM\t$(CHISEL_TEST_DIR)"; \
+	rm -rf $(CHISEL_TEST_DIR); \
 	fi
 
 cleanval:
