@@ -1,5 +1,6 @@
 import chisel3._
 import chisel3.util._
+import main._
 
 class TOP extends Module {
   val io = IO(new Bundle {
@@ -24,7 +25,9 @@ class TOP extends Module {
     val seg6        = Output(UInt(8.W))
     val seg7        = Output(UInt(8.W))
   })
-  io.ledr        := io.sw
+  val u_example = Module(new example(16))
+  u_example.io.in := io.sw
+  io.ledr        := u_example.io.out
   io.VGA_CLK     := 0.U
   io.VGA_HSYNC   := 0.U
   io.VGA_VSYNC   := 0.U
