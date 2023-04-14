@@ -7,7 +7,7 @@ BUILD_PATH	=	$(TOP_DIR)build
 
 # verilator
 VAL				=	verilator
-VAL_DI			=	$(TOP_DIR)$(VAL)
+VAL_DIR			=	$(TOP_DIR)$(VAL)
 VAL_CFLAGS		+=	-MMD --build -cc -O3 --x-assign fast --x-initial fast --noassert
 CFLAGS			+=	-DTOP_NAME=V$(TOPNAME)
 VAL_INC_PATH	=	$(VAL_DIR)/INC
